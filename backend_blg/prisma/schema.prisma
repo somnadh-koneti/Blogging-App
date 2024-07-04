@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  name     String
+  password String
+  userImage String?
+  createdAt  DateTime @default(now())
+  followedBy Follows[] @relation("followedBy")
+  following  Follows[] @relation("following")
+  posts    Post[]
+  savedPosts SavedPost[]
+}
+
+model Follows {
+  followedById String
+  followingId  String
+  followedBy   User @relation("followedBy", fields: [followedById], references: [id])
+  following    User @relation("following", fields: [followingId], references: [id])
+
+  @@id([followingId, followedById])
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  authorId  String
+  createdAt  DateTime @default(now())
+  title     String
+  content   String
+  image     String?
+  author    User     @relation(fields: [authorId], references: [id])
+  tags      PostTag[]
+  savedBy   SavedPost[]
+}
+
+model SavedPost {
+  id        String @id @default(uuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now()) 
+  user      User   @relation(fields: [userId], references: [id])
+  post      Post   @relation(fields: [postId], references: [id])
+  
+  @@unique([userId, postId])
+}
+
+model Tag {
+  id    String @id @default(uuid())
+  name  String @unique
+  posts PostTag[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post   @relation(fields: [postId], references: [id])
+  tag    Tag    @relation(fields: [tagId], references: [id])
+
+  @@id([postId, tagId])
+}
+
+
