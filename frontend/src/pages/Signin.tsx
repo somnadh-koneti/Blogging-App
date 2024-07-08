@@ -12,8 +12,7 @@ import { logout_val } from "../store/atoms/Datarecoil";
 export default function Signin() {
   const navigate=useNavigate();
   const setls_val=useSetRecoilState(logout_val);
-
-
+  
   const [sginInput,setsginInput]=useState<signin_inp>({email:"",password:""});
 
   const [onbtn, setonbtn] = useState<boolean>(true);

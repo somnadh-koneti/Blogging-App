@@ -41,7 +41,7 @@ export const routesConfig = [
     { path: "Profile/userSpecificDetails/:id/blog/:id", element: <Blogid /> },
 ];
 
-function App() {
+const App: React.FC =()=> {
   const lg_val=useRecoilValue(logout_val);
 
   return (

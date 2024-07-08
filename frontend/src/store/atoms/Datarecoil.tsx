@@ -66,8 +66,8 @@ export const allblogs = atom<Post[]>({
 });
 
 //------------------------logout------------------
-
+const log=()=>{if(localStorage.getItem("token")){ return false }else{return true }}
 export const logout_val = atom<boolean>({
     key: 'logout',
-    default:true
+    default:log()
 });
