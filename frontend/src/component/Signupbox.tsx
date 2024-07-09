@@ -81,10 +81,10 @@ export default function () {
 
 return (
     <div className=" h-screen flex justify-center items-center">
-    <div className="w-1/2 md:2/5 lg:w-2/5 xl:w-1/2  ">
+    <div className="w-11/12 sm:w-3/5 md:2/5 lg:w-2/5 xl:w-1/2">
 
-        <div className="text-center pb-10">
-            <div className="text-4xl font-bold">Create an account</div>
+        <div className="text-center pb-8">
+            <div className="text-3xl sm:text-4xl font-bold">Create an account</div>
             <div className="text-lg">Already have an account? <Link className="underline pl-1" to={"/"}>Login</Link></div>
         </div>
 

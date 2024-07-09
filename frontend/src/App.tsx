@@ -11,7 +11,7 @@ import Following from './pages/Following'
 import SearchBlog from './pages/SearchBlog'
 import User_specific_blog from './component/User_specific_blog'
 import Profile from './pages/Profile'
-import { logout_val } from './store/atoms/Datarecoil'
+import { logoutVal } from './store/atoms/Datarecoil'
 
 
 export const routesConfig = [
@@ -41,8 +41,9 @@ export const routesConfig = [
     { path: "Profile/userSpecificDetails/:id/blog/:id", element: <Blogid /> },
 ];
 
-const App: React.FC =()=> {
-  const lg_val=useRecoilValue(logout_val);
+const App=()=> {
+  const lg_val=useRecoilValue(logoutVal);
+  console.log()
 
   return (
     <div>
@@ -58,10 +59,8 @@ const App: React.FC =()=> {
 
       </Routes>
     </BrowserRouter>
-
     </div>
-  )
-}
+  )}
 
 export default App
 

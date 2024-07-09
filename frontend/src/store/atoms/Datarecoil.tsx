@@ -1,4 +1,4 @@
-import { atom} from 'recoil';
+import { atom, selector} from 'recoil';
 import { Data, Post, home_data_val} from '../Interface_data';
 
 //    const [todo,settodo]=useRecoilState(displayval);
@@ -66,8 +66,16 @@ export const allblogs = atom<Post[]>({
 });
 
 //------------------------logout------------------
-const log=()=>{if(localStorage.getItem("token")){ return false }else{return true }}
-export const logout_val = atom<boolean>({
-    key: 'logout',
-    default:log()
+export const tokenval=atom<string>({
+    key: 'token_val',
+    default:""
+});
+export const logoutVal = selector<boolean>({
+    key: 'logout_val',
+    get: ({ get }) => {
+    const tokenFromAtom = get(tokenval);
+    const tokenFromLocalStorage = localStorage.getItem("token");
+    if (tokenFromLocalStorage === tokenFromAtom && tokenFromAtom!=="" &&  tokenFromLocalStorage!==""){return false}
+    else{return true}
+    }
 });

@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import SubFields from '../component/SubFields';
 import { useSetRecoilState } from 'recoil';
-import { logout_val } from '../store/atoms/Datarecoil';
+import { tokenval } from '../store/atoms/Datarecoil';
 
 export default function Fields() {  
     const navigate=useNavigate();
-    const setls_val=useSetRecoilState(logout_val);
-
+    const token=useSetRecoilState(tokenval)
 
     const data=[{name:"Blogs",link:""},{name:"Following",link:"Following"},{name:"Create Blog",link:"CreatePost"},{name:"Search Blogs",link:"SearchBlog"},{name:"Profile",link:"Profile"}]
 
@@ -19,7 +18,7 @@ export default function Fields() {
 
         <div className='text-center'>
         <button className="bg-red-100 text-xl font-medium w-full h-12 hover:bg-red-400 rounded-xl hover:tracking-wide  hover:shadow-xl hover:shadow-red-200 hover:text-white "
-            onClick={()=>{setls_val(true); localStorage.removeItem("token"); navigate("/")}}>logout</button>
+            onClick={()=>{token(""); localStorage.removeItem("token"); navigate("/")}}>logout</button>
         </div>
     </div>
     )

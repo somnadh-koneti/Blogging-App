@@ -6,12 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useSetRecoilState } from "recoil";
-import { logout_val } from "../store/atoms/Datarecoil";
+import { tokenval } from "../store/atoms/Datarecoil";
 
 
 export default function Signin() {
   const navigate=useNavigate();
-  const setls_val=useSetRecoilState(logout_val);
+  const Token=useSetRecoilState(tokenval);
   
   const [sginInput,setsginInput]=useState<signin_inp>({email:"",password:""});
 
@@ -31,7 +31,7 @@ export default function Signin() {
 
       if (data.message==="valid")
       {
-        setls_val(false);
+        Token(data.token);
         localStorage.setItem("token",data.token);
         navigate("/home");
       }
@@ -45,10 +45,10 @@ export default function Signin() {
   return (
     <div className="bg-gray-300 w-full h-screen flex flex-col justify-center items-center">
 
-        <div className="font-bold tracking-wide leading-relaxed flex-wrap pb-14 text-2xl md:text-3xl">
+        <div className="font-bold tracking-wide leading-relaxed flex-wrap pb-10 mx-4 text-2xl md:text-3xl">
         To the Blogging Community, welcome back!.
         </div>
-        <div className=" w-96">
+        <div className="w-11/12 sm:w-3/5 md:w-1/2 lg:w-2/5 ">
           <LabelledInput label={"Email"} placeholder={"Enter valid email."} inp_type={"text"} onChange={(e)=>{
           setsginInput({...sginInput,email:e.target.value})}} />
           <LabelledInput label={"Password"} placeholder={"Enter valid password"} inp_type={"password"} onChange={(e)=>{

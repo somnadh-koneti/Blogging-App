@@ -17,12 +17,11 @@ return (
         <span className="font-bold">💡Inspiration and Motivation:</span> Get inspired by reading and engaging with a diverse range of content created by our community members.
         </div>
 
-        <div className="text-xl pb-4 tracking-wide leading-relaxed text-justify">
+        <div className="text-xl pb-3 tracking-wide leading-relaxed text-justify">
         <span className="font-bold">🚀 Launch Your Blogging Journey: </span> Whether you're a seasoned writer or just starting out, our platform provides the perfect space to showcase your work.
         </div>
 
-        <div className="text-lg font-semibold ">Somnadh koneti</div>
-        <div className="text-gray-500">Student</div>
+        <div className="text-lg font-semibold ">Somanadh koneti</div>
     </div>
 
     </div>
