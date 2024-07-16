@@ -4,12 +4,13 @@ import { profile_edit } from "../store/Interface_data";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 import { useRecoilState } from "recoil";
-import { dataAtom, home_data } from "../store/atoms/Datarecoil";
+import { dataAtom, home_data, profile_saved } from "../store/atoms/Datarecoil";
 
 export default function Profile_edit() {
 
     const [User_data,setUser_data]=useRecoilState(home_data);
-    const [blog_data,setblog_data]=useRecoilState(dataAtom)
+    const [blog_data,setblog_data]=useRecoilState(dataAtom);
+    const [Savedval,setSavedval]=useRecoilState(profile_saved);
 
     const [Newdata,setNewdata]=useState<profile_edit>({name:User_data.name,CurrPass:'',NewPass:'',RetyPass:'',image:{base64:null,name:null}});
 
@@ -105,7 +106,12 @@ const userSubmit=async()=>{
     const res_data= await axios.put(`${BACKEND_URL}/blogdetails/upt_username`,{username:Newdata.name},{headers: {'Authorization': localStorage.getItem("token")}})
     setUser_data({...User_data,name:Newdata.name})
     setblog_data({...blog_data,name:Newdata.name})
+    setSavedval( Savedval.map(val=>{ 
+        if(val.authorId===User_data.id){return {...val,author:{ ...val.author,name:Newdata.name}}};
+        return val;
+    }))
     alert(res_data.data.msg);
+    
 }
 const passSubmit=async()=>{
     const res_data= await axios.put(`${BACKEND_URL}/blogdetails/upt_password`,{password:Newdata.NewPass},{headers: {'Authorization': localStorage.getItem("token")}})
@@ -118,6 +124,10 @@ const imageSubmit=async()=>{
     const res_data= await axios.put(`${BACKEND_URL}/blogdetails/upt_image`,{image:Newdata.image.base64},{headers: {'Authorization': localStorage.getItem("token")}})
     setUser_data({...User_data,userImage:Newdata.image.base64})
     setblog_data({...blog_data,userImage:Newdata.image.base64})
+    setSavedval( Savedval.map(val=>{ 
+        if(val.authorId===User_data.id){return {...val,author:{ ...val.author,userImage:Newdata.image.base64}}};
+        return val;
+    }))
     clearImage();
     alert(res_data.data.msg);
 }

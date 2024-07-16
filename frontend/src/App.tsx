@@ -43,7 +43,6 @@ export const routesConfig = [
 
 const App=()=> {
   const lg_val=useRecoilValue(logoutVal);
-  console.log()
 
   return (
     <div>

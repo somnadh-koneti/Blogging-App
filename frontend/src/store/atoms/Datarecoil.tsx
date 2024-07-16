@@ -27,7 +27,7 @@ export const dataAtom = atom<Data>({
 });
 
 export const profile_saved=atom<Post[]>({
-    key: 'profile_saved',
+    key: 'profile_saved1',
     default: [],
 });
 

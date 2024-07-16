@@ -18,6 +18,7 @@ export default function Profile() {
 
   const [blog_saved,setblog_saved]=useRecoilState(profile_saved)
   const [data,setdata]=useRecoilState(dataAtom)
+  console.log(data)
   
 useEffect(()=>{
   let isMounted = true;
@@ -46,7 +47,7 @@ if (loading) {return <div className="h-full w-full flex justify-center items-cen
       <div className="z-10 mt-44 flex justify-center  py-2 sm:py-6  w-full lg:w-[calc(100vw-24%)]">
         <div className="flex flex-col gap-3 w-10/12">
           {data.posts.map((val: Post) => (
-            <Blogcard key={val.id} savedBy={val.savedBy} authorId={val.authorId} author={{ name: val.author.name, userImage: val.author.userImage }} id={val.id} title={val.title} content={val.content} image={val.image} createdAt={val.createdAt} tags={val.tags}/>))}
+            <Blogcard key={val.id} savedBy={val.savedBy} authorId={val.authorId} author={{ name: data.name, userImage: data.userImage }} id={val.id} title={val.title} content={val.content} image={val.image} createdAt={val.createdAt} tags={val.tags}/>))}
         </div>
       </div>
       }

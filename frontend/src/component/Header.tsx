@@ -17,8 +17,8 @@ export default function Header() {
     };
 
     return (
-    <header className="fixed top-0 left-0 w-full h-20 border-b-2 border-slate-200 flex items-center justify-between px-4 lg:px-10 bg-white z-20">
-        <div className="text-2xl lg:text-4xl font-bold text-cyan-900 flex-grow">BlogSphere</div>
+    <header className="fixed top-0 left-0 w-full h-20 border-b-2 border-slate-200 flex items-center justify-between px-4 lg:px-10 z-20">
+        <div className="text-2xl lg:text-4xl font-bold text-cyan-700 flex-grow">BlogSphere</div>
 
         <div className="hidden lg:flex items-center text-lg font-semibold">
             <Blg_circle name={user_dtls.name} image={user_dtls.userImage} 

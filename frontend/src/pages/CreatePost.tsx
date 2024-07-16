@@ -125,8 +125,8 @@ export default function CreatePost() {
         <div>{postval.image?.base64 ? <button onClick={clearImage} className="bg-blue-500 text-white rounded w-32 h-7 text-center">Clear</button> :""}</div>
       </div>
 
-      <div className="w-11/12 sm:w-4/5 pt-5 flex justify-start">
-        <button onClick={submit} disabled={(redcontent && redtags && redtitle)?false:true} className="bg-blue-500 text-white rounded w-full sm:w-56 h-8 text-center">Create post</button>
+      <div className="w-11/12 sm:w-4/5 pt-5 flex justify-center">
+        <button onClick={submit} disabled={(redcontent && redtags && redtitle)?false:true} className="bg-black text-white rounded w-full sm:w-40 h-8 text-center">Create post</button>
       </div>
 
       </div>

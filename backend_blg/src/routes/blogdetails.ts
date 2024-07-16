@@ -73,7 +73,7 @@ blogRouter.get('/blog_details', async(c) => {
                         where: { followedById: id },
                         select: { followedById: true }
                         }}}}},
-                    posts: {include:{tags: {include: {tag: true}},author: {select: {name: true,userImage: true}},savedBy: {where: {userId: id},select: {id: true}}}}
+                    posts: {include:{tags: {include: {tag: true}},savedBy: {where: {userId: id},select: {id: true}}}}
                 }
         });
 
