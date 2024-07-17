@@ -4,7 +4,7 @@ import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
 import CreatePost from './pages/CreatePost'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 import Blogid from './component/Blogid'
 import AllBlogs from './pages/AllBlogs'
 import Following from './pages/Following'
@@ -12,6 +12,9 @@ import SearchBlog from './pages/SearchBlog'
 import User_specific_blog from './component/User_specific_blog'
 import Profile from './pages/Profile'
 import { logoutVal } from './store/atoms/Datarecoil'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { BACKEND_URL } from './config'
 
 
 export const routesConfig = [
@@ -42,7 +45,27 @@ export const routesConfig = [
 ];
 
 const App=()=> {
-  const lg_val=useRecoilValue(logoutVal);
+  const [lg_val,setlg_val]=useRecoilState(logoutVal);
+  const [loading, setLoading] = useState<boolean>(true);
+
+
+  useEffect(()=>{
+    let isMounted = true;
+    async function fun()
+      {const res= await axios.get(`${BACKEND_URL}/userdetails/jwtcheck`)
+        if (isMounted) 
+          {
+            const data= res.data
+            if(data.token===localStorage.getItem("token")){setlg_val(false)}
+            setLoading(false)
+          } }
+    fun()
+    return () => {isMounted = false};
+  },[])
+
+  if (loading) {return <div></div>;}
+
+  
 
   return (
     <div>

@@ -18,7 +18,6 @@ export default function Profile() {
 
   const [blog_saved,setblog_saved]=useRecoilState(profile_saved)
   const [data,setdata]=useRecoilState(dataAtom)
-  console.log(data)
   
 useEffect(()=>{
   let isMounted = true;

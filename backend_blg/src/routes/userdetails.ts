@@ -46,6 +46,16 @@ catch(e){
 })
 
 //------------------signin-------------------------------
+let tokenval="";
+
+userRouter.get('/jwtcheck', async (c) => {
+    return c.json({token:tokenval})
+})    
+
+userRouter.get('/jwtlogout', async (c) => {
+    tokenval=""
+    return c.json({})
+}) 
 
 userRouter.post('/signin', async (c) => {
 const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
@@ -69,6 +79,7 @@ try{
         return c.json({message: "Invalid credentials"})
     }
     const jwt= await sign({id:user.id},c.env.JWT_SECRET)
+    tokenval=jwt;
 
     return c.json({
         message: "valid",

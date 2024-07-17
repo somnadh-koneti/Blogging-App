@@ -1,5 +1,7 @@
 import { atom, selector} from 'recoil';
 import { Data, Post, home_data_val} from '../Interface_data';
+import axios from 'axios';
+import { BACKEND_URL } from '../../config';
 
 //    const [todo,settodo]=useRecoilState(displayval);
 
@@ -66,16 +68,7 @@ export const allblogs = atom<Post[]>({
 });
 
 //------------------------logout------------------
-export const tokenval=atom<string>({
+export const logoutVal=atom<boolean>({
     key: 'token_val',
-    default:""
-});
-export const logoutVal = selector<boolean>({
-    key: 'logout_val',
-    get: ({ get }) => {
-    const tokenFromAtom = get(tokenval);
-    const tokenFromLocalStorage = localStorage.getItem("token");
-    if (tokenFromLocalStorage === tokenFromAtom && tokenFromAtom!=="" &&  tokenFromLocalStorage!==""){return false}
-    else{return true}
-    }
+    default:true
 });

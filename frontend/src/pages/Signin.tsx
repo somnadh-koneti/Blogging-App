@@ -6,12 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useSetRecoilState } from "recoil";
-import { tokenval } from "../store/atoms/Datarecoil";
+import { logoutVal } from "../store/atoms/Datarecoil";
 
 
 export default function Signin() {
   const navigate=useNavigate();
-  const Token=useSetRecoilState(tokenval);
+  const Token=useSetRecoilState(logoutVal);
   
   const [sginInput,setsginInput]=useState<signin_inp>({email:"",password:""});
 
@@ -19,7 +19,7 @@ export default function Signin() {
 
   useEffect(()=>{
     let val=setTimeout(()=>{ if(sginInput.email!=="" && sginInput.password!==""){setonbtn(false)}
-      else{setonbtn(true)}},1.5*1000)
+      else{setonbtn(true)}},0*1000)
       return ()=>{clearTimeout(val)}
   },[sginInput])
 
@@ -31,8 +31,8 @@ export default function Signin() {
 
       if (data.message==="valid")
       {
-        Token(data.token);
         localStorage.setItem("token",data.token);
+        Token(false);
         navigate("/home");
       }
       else{
