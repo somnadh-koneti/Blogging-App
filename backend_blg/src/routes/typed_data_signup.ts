@@ -1,6 +1,5 @@
 import {Hono} from "hono";
-import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaClient } from '@prisma/client'
 import {email, name, password } from "@somnadh/blog"
 
 
@@ -46,7 +45,7 @@ tydata_signup.post("/password", async (c) => {
 
 tydata_signup.post("/email", async (c) => {
 
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate()) 
+    const prisma = new PrismaClient();
     const data= await c.req.json();
 
     const val = {email: data.email}

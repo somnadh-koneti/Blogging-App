@@ -5,12 +5,15 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "lib": [
-      "ESNext"
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
     ],
     "types": [
-      "@cloudflare/workers-types"
+      "node"
     ],
+    "skipLibCheck": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
-  },
+  }
 }

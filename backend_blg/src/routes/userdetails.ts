@@ -1,13 +1,8 @@
 import {Hono} from "hono";
-import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaClient } from '@prisma/client'
 import { sign } from 'hono/utils/jwt/jwt'
 import {signup,signin} from "@somnadh/blog"
 import bcrypt from 'bcryptjs';
-
-
-
-
 
 export const userRouter= new Hono<{Bindings:{DATABASE_URL:string; JWT_SECRET:string;}}>();
 
@@ -16,7 +11,7 @@ export const userRouter= new Hono<{Bindings:{DATABASE_URL:string; JWT_SECRET:str
 
 userRouter.post('/signup', async (c) => {
 
-const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate()) 
+const prisma = new PrismaClient()
 
 const body= await c.req.json();
 
@@ -58,7 +53,7 @@ userRouter.get('/jwtlogout', async (c) => {
 }) 
 
 userRouter.post('/signin', async (c) => {
-const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+const prisma = new PrismaClient()
 
 const body= await c.req.json();
 const {success}=signin.safeParse(body);
@@ -78,7 +73,7 @@ try{
     if(!passwordMatch){
         return c.json({message: "Invalid credentials"})
     }
-    const jwt= await sign({id:user.id},c.env.JWT_SECRET)
+    const jwt= await sign({id:user.id},process.env.JWT_SECRET!)
     tokenval=jwt;
 
     return c.json({

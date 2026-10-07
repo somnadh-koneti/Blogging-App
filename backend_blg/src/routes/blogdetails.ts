@@ -1,6 +1,5 @@
 import {Hono} from "hono";
-import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaClient } from '@prisma/client'
 import { verify } from "hono/jwt";
 import { postdata,vaild_data} from "@somnadh/blog";
 import bcrypt from 'bcryptjs';
@@ -18,7 +17,7 @@ blogRouter.use("/*", async (c,next)=>{
 
     try{
         const auth=c.req.header("authorization") || "";
-        const user= await verify(auth,c.env.JWT_SECRET)
+        const user= await verify(auth,process.env.JWT_SECRET!)
         if(user){
             c.set("userid",user.id)
             await next()
@@ -36,7 +35,7 @@ blogRouter.use("/*", async (c,next)=>{
 //------------------------home_page_details------------------
 
 blogRouter.get('/home_page_details', async(c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient();
     const id= c.get("userid")
     
     const {success}=vaild_data.safeParse({id:id})
@@ -58,7 +57,7 @@ blogRouter.get('/home_page_details', async(c) => {
 //-----------------------get_user_details---------------------
 
 blogRouter.get('/blog_details', async(c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient();
     const id= c.get("userid")
     
     const {success}=vaild_data.safeParse({id:id})
@@ -93,7 +92,7 @@ blogRouter.get('/blog_details', async(c) => {
 //----------------------all_blogs-----------------------add paginaton(initial 10 blogs , if requested 10 more pagination means)
 
 blogRouter.get('/blog', async(c) => {
-const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+const prisma = new PrismaClient();
 
 const id=c.get("userid")
 
@@ -117,7 +116,7 @@ catch(e){
 
 blogRouter.get('/blog/:id', async (c) => { // /blog/:id -> body=c.req.param("id")  where:{id:body}
     
-const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+const prisma = new PrismaClient();
 const body= c.req.param("id")
 const user_id=c.get("userid")
 
@@ -144,7 +143,7 @@ catch(e){
 
 blogRouter.get('/specific_userId_blog/:id', async (c) => {
     
-const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+const prisma = new PrismaClient();
 const body= c.req.param("id")
 const id=c.get("userid")
 
@@ -181,7 +180,7 @@ catch(e){
 //------------------blog_create---------------------
 
 blogRouter.post('/blog_create', async(c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient();
 
     const body= await c.req.json();
     const { success } = postdata.safeParse(body);
@@ -219,7 +218,7 @@ blogRouter.post('/blog_create', async(c) => {
 //----------------------blog_delete-----------------------------
 
 blogRouter.put('/blog_delete', async (c) => {
-const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+const prisma = new PrismaClient()
 const body= await c.req.json();
 
 
@@ -242,7 +241,7 @@ try {
 //-------------------search_by_tags---------------------------
 
 blogRouter.post('/search_by_tags', async (c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const body=await c.req.json()
     const id=c.get("userid")
     
@@ -290,7 +289,7 @@ blogRouter.post('/search_by_tags', async (c) => {
 //---------------------------following_post--------------------
 
 blogRouter.get('/following', async (c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
     
     const {success}=vaild_data.safeParse({id:id})
@@ -325,7 +324,7 @@ blogRouter.get('/following', async (c) => {
 
 blogRouter.post('/connect_friends', async (c) => {
 
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
     const body= await c.req.json();
 
@@ -354,7 +353,7 @@ blogRouter.post('/connect_friends', async (c) => {
 
 blogRouter.post('/unfollow_friend', async (c) => {
 
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
     const body= await c.req.json();
 
@@ -375,7 +374,7 @@ blogRouter.post('/unfollow_friend', async (c) => {
 
 blogRouter.post('/Save_Post', async (c) => {
 
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
     const body= await c.req.json();
 
@@ -395,7 +394,7 @@ blogRouter.post('/Save_Post', async (c) => {
 
 blogRouter.post('/unSave_Post', async (c) => {
 
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
     const body= await c.req.json();
     
@@ -415,7 +414,7 @@ blogRouter.post('/unSave_Post', async (c) => {
 
 blogRouter.get('/savedPosts', async (c) => {
 
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
     
     const {success}=vaild_data.safeParse({id:id})
@@ -454,7 +453,7 @@ blogRouter.get('/savedPosts', async (c) => {
 //--------------------check the user password----------------
 
 blogRouter.post("/Check_password", async (c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
 
     const data =await c.req.json();
@@ -477,7 +476,7 @@ blogRouter.post("/Check_password", async (c) => {
 //----------------update username---------------------------------
 
 blogRouter.put("/upt_username", async (c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
 
     const data =await c.req.json();
@@ -498,7 +497,7 @@ blogRouter.put("/upt_username", async (c) => {
 //---------------------update password-------------------
 
 blogRouter.put("/upt_password", async (c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
 
     const data =await c.req.json();
@@ -520,7 +519,7 @@ blogRouter.put("/upt_password", async (c) => {
 //-------------update image-------------------
 
 blogRouter.put("/upt_image", async (c) => {
-    const prisma = new PrismaClient({datasourceUrl: c.env.DATABASE_URL,}).$extends(withAccelerate())
+    const prisma = new PrismaClient()
     const id= c.get("userid")
 
     const data =await c.req.json();
