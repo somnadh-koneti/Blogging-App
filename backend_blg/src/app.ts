@@ -3,10 +3,20 @@ import { prisma } from './lib/prisma'
 import { authRoutes } from './routes/auth.routes'
 import { registerAuthPlugins } from './plugins/auth'
 import { blogRoutes } from './routes/blog.routes'
+import { validationRoutes } from './routes/validation.routes'
+import fastifyCors from '@fastify/cors'
 
 export function buildApp() {
-    const app = Fastify({
-        logger: true
+    const app = Fastify({ logger: true })
+
+    app.register(fastifyCors, {
+        origin: [
+            'http://localhost:5173',
+            'http://127.0.0.1:5173'
+        ],
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true
     })
 
     app.get('/health', async () => {
@@ -34,6 +44,10 @@ export function buildApp() {
 
     app.register(blogRoutes, {
         prefix: '/blogdetails'
+    })
+
+    app.register(validationRoutes, {
+        prefix: '/typeddetails'
     })
 
     return app

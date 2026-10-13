@@ -6,7 +6,7 @@ import { getAllBlogs, getBlogById, getBlogsByUserId, createBlog, deleteBlog, sea
 import { followUser, unfollowUser, getFollowingPosts } from '../services/follow.service'
 import { savePost, unsavePost, getSavedPosts } from '../services/saved-post.service'
 import { getHomePageDetails } from '../services/auth.service'
-import { getUserProfile, verifyCurrentPassword, updateUsername, updatePassword, updateProfileImage } from '../services/profile.service'
+import { getUserProfile, updateUsername, updatePassword, updateProfileImage, verifyCurrentPassword } from '../services/profile.service'
 
 export async function blogRoutes(app: FastifyInstance) {
 
@@ -336,8 +336,8 @@ export async function blogRoutes(app: FastifyInstance) {
     })
 
     app.post('/Save_Post', { preHandler: requireAuth }, async (request, reply) => {
-        const body = request.body as { id?: unknown }
-        const postId = body?.id
+        const body = request.body as { Post_id?: unknown } | null
+        const postId = body?.Post_id
 
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
@@ -364,8 +364,8 @@ export async function blogRoutes(app: FastifyInstance) {
     })
 
     app.post('/unSave_Post', { preHandler: requireAuth }, async (request, reply) => {
-        const body = request.body as { id?: unknown }
-        const postId = body?.id
+        const body = request.body as { Post_id?: unknown } | null
+        const postId = body?.Post_id
 
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
@@ -417,31 +417,57 @@ export async function blogRoutes(app: FastifyInstance) {
     })
 
     app.post('/Check_password', { preHandler: requireAuth }, async (request, reply) => {
-        const body = request.body as { CurrPass?: unknown }
+        const body = request.body as { CurrPass?: unknown } | null
 
-        if (
-            typeof body?.CurrPass !== 'string' ||
-            body.CurrPass.length === 0
-        ) {
+        if (typeof body?.CurrPass !== 'string' || !body.CurrPass) {
             return reply.code(400).send({
-            message: 'Current password is required'
+                message: 'Current password is required'
             })
         }
 
         try {
-            const passwordMatches = await verifyCurrentPassword(
-            request.user.id,
-            body.CurrPass
+            const isValid = await verifyCurrentPassword(
+                request.user.id,
+                body.CurrPass
             )
 
             return reply.code(200).send({
-            msg: passwordMatches ? '1' : '0'
+                msg: isValid ? '1' : '0'
             })
         } catch (error) {
-            request.log.error(error, 'Failed to verify password')
+            request.log.error(error, 'Failed to verify current password')
 
             return reply.code(500).send({
-            message: 'Unable to verify password'
+                message: 'Unable to verify current password'
+            })
+        }
+    })
+
+    // --------------------------------------------------
+    // UPDATE PASSWORD
+    // Original Hono endpoint: PUT /blogdetails/upt_password
+    // --------------------------------------------------
+
+    app.put('/upt_password', { preHandler: requireAuth }, async (request, reply) => {
+        const body = request.body as { password?: unknown } | null
+
+        if (typeof body?.password !== 'string' || body.password.length === 0) {
+            return reply.code(400).send({
+                message: 'Password is required'
+            })
+        }
+
+        try {
+            await updatePassword(request.user.id, body.password)
+
+            return reply.code(200).send({
+                msg: 'Password Updated'
+            })
+        } catch (error) {
+            request.log.error(error, 'Failed to update password')
+
+            return reply.code(500).send({
+                message: 'Unable to update password'
             })
         }
     })
@@ -479,103 +505,32 @@ export async function blogRoutes(app: FastifyInstance) {
         }
     })
 
-    app.put('/upt_password', { preHandler: requireAuth }, async (request, reply) => {
-        const body = request.body as {
-            currentPassword?: unknown
-            password?: unknown
-        } | null
-
-        if (
-            typeof body?.currentPassword !== 'string' ||
-            typeof body?.password !== 'string'
-        ) {
-            return reply.code(400).send({
-            message: 'Current password and new password are required'
-            })
-        }
-
-        const { currentPassword, password } = body
-
-        if (password.length < 8 || password.length > 72) {
-            return reply.code(400).send({
-            message: 'New password must be between 8 and 72 characters'
-            })
-        }
-
-        if (currentPassword === password) {
-            return reply.code(400).send({
-            message: 'New password must be different from current password'
-            })
-        }
-
-        try {
-            const isValid = await verifyCurrentPassword(
-            request.user.id,
-            currentPassword
-            )
-
-            if (!isValid) {
-            return reply.code(401).send({
-                message: 'Current password is incorrect'
-            })
-            }
-
-            await updatePassword(request.user.id, password)
-
-            return reply.code(200).send({
-            msg: 'Password Updated'
-            })
-        } catch (error) {
-            request.log.error(error, 'Failed to update password')
-
-            return reply.code(500).send({
-            message: 'Unable to update password'
-            })
-        }
-    })
+    
+    // --------------------------------------------------
+    // UPDATE PROFILE IMAGE
+    // Original Hono endpoint: PUT /blogdetails/upt_image
+    // --------------------------------------------------
 
     app.put('/upt_image', { preHandler: requireAuth }, async (request, reply) => {
         const body = request.body as { image?: unknown } | null
 
         if (typeof body?.image !== 'string') {
             return reply.code(400).send({
-            message: 'Image URL is required'
-            })
-        }
-
-        const image = body.image.trim()
-
-        if (image.length === 0 || image.length > 2048) {
-            return reply.code(400).send({
-            message: 'Image URL must be between 1 and 2048 characters'
+                message: 'Image must be a string'
             })
         }
 
         try {
-            const url = new URL(image)
-
-            if (!['https:', 'http:'].includes(url.protocol)) {
-            return reply.code(400).send({
-                message: 'Image must be an HTTP or HTTPS URL'
-            })
-            }
-        } catch {
-            return reply.code(400).send({
-            message: 'Invalid image URL'
-            })
-        }
-
-        try {
-            await updateProfileImage(request.user.id, image)
+            await updateProfileImage(request.user.id, body.image)
 
             return reply.code(200).send({
-            msg: 'Image Updated'
+                msg: 'Image Updated'
             })
         } catch (error) {
             request.log.error(error, 'Failed to update profile image')
 
             return reply.code(500).send({
-            message: 'Unable to update profile image'
+                message: 'Unable to update profile image'
             })
         }
     })

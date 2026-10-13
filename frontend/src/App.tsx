@@ -48,20 +48,49 @@ const App=()=> {
   const [lg_val,setlg_val]=useRecoilState(logoutVal);
   const [loading, setLoading] = useState<boolean>(true);
 
+  useEffect(() => {
+      let isMounted = true;
 
-  useEffect(()=>{
-    let isMounted = true;
-    async function fun()
-      {const res= await axios.get(`${BACKEND_URL}/userdetails/jwtcheck`)
-        if (isMounted) 
-          {
-            const data= res.data
-            if(data.token===localStorage.getItem("token")){setlg_val(false)}
-            setLoading(false)
-          } }
-    fun()
-    return () => {isMounted = false};
-  },[])
+      async function checkAuthentication() {
+          const token = localStorage.getItem("token");
+
+          if (!token) {
+              if (isMounted) {
+                  setlg_val(true);
+                  setLoading(false);
+              }
+              return;
+          }
+
+          try {
+              await axios.get(`${BACKEND_URL}/userdetails/me`, {
+                  headers: {
+                      Authorization: `Bearer ${token}`
+                  }
+              });
+
+              if (isMounted) {
+                  setlg_val(false);
+              }
+          } catch (error) {
+              console.error("Authentication verification failed:", error);
+
+              if (isMounted) {
+                  setlg_val(true);
+              }
+          } finally {
+              if (isMounted) {
+                  setLoading(false);
+              }
+          }
+      }
+
+      checkAuthentication();
+
+      return () => {
+          isMounted = false;
+      };
+  }, [setlg_val]);
 
   if (loading) {return <div></div>;}
 

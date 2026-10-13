@@ -15,17 +15,50 @@ export default function Profile_edit() {
     const [Newdata,setNewdata]=useState<profile_edit>({name:User_data.name,CurrPass:'',NewPass:'',RetyPass:'',image:{base64:null,name:null}});
 
 //------check Curr_password and verify----------
-    const [Access_type,setAccess_type]=useState<boolean>(true);
+    const [Access_type, setAccess_type] = useState<boolean>(true);
 
-    useEffect(()=>{let psd=setTimeout(()=>{check_psd()},0*1000); return ()=>{clearTimeout(psd)}},[Newdata.CurrPass])
+    useEffect(() => {
+        const currentPassword = Newdata.CurrPass;
 
-    if(Newdata.CurrPass==='' && !Access_type){setAccess_type(true)}
+        // Do not call the backend for an empty password.
+        if (!currentPassword.trim()) {
+            setAccess_type(true);
+            return;
+        }
 
-    async function check_psd(){ 
-        const res_data= await axios.post(`${BACKEND_URL}/blogdetails/Check_password`,{CurrPass:Newdata.CurrPass},{headers: {'Authorization': localStorage.getItem("token")}})
-        if(res_data.data.msg==="1"){setAccess_type(false)}
-        if(res_data.data.msg==="0"){if(Newdata.CurrPass!==""){setAccess_type(true);}}
-    }
+        // Reset verification when the current password changes.
+        setAccess_type(true);
+
+        let cancelled = false;
+
+        const timer = setTimeout(async () => {
+            try {
+                const res = await axios.post(
+                    `${BACKEND_URL}/blogdetails/Check_password`,
+                    { CurrPass: currentPassword },
+                    {
+                        headers: {
+                            Authorization: localStorage.getItem("token")
+                        }
+                    }
+                );
+
+                if (!cancelled) {
+                    setAccess_type(res.data.msg !== "1");
+                }
+            } catch (error) {
+                if (!cancelled) {
+                    console.error("Password verification failed:", error);
+                    setAccess_type(true);
+                }
+            }
+        }, 500);
+
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [Newdata.CurrPass]);
 //-------------------
     const [redname,setredname]=useState<boolean>(true);
     const [redNewpswd,setredNewpswd]=useState<boolean>(true);

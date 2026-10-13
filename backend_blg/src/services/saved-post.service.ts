@@ -53,28 +53,28 @@ export async function unsavePost(
 
 export async function getSavedPosts(userId: string) {
     const savedPosts = await prisma.savedPost.findMany({
-        where: { userId },
+        where: {
+            userId
+        },
         include: {
-        post: {
-            include: {
-            author: {
-                select: {
-                name: true,
-                userImage: true
-                }
-            },
-            tags: {
+            post: {
                 include: {
-                tag: true
+                    author: {
+                        select: {
+                            name: true,
+                            userImage: true
+                        }
+                    },
+                    tags: {
+                        include: {
+                            tag: true
+                        }
+                    }
                 }
             }
-            }
-        }
         },
         orderBy: {
-        post: {
             createdAt: 'desc'
-        }
         }
     })
 
